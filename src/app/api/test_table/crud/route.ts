@@ -10,7 +10,8 @@ export async function GET(req: Request) {
 
     const result = await db.select()
         .from(testTable)
-        .where(ilike(testTable.col1, col1));
+        .where(ilike(testTable.col1, col1))
+        .execute();
 
     if (result.length === 0) {
         return NextResponse.json({
@@ -47,7 +48,8 @@ export async function PATCH(req: Request) {
             .set({
                 col2: body.col2
             })
-            .where(eq(testTable.col1, body.col1));
+            .where(eq(testTable.col1, body.col1))
+            .execute();
 
         return NextResponse.json({
             message: res
@@ -61,21 +63,29 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
-    const id = Number(searchParams.get("id"));
+    const id = searchParams.get("id");
     const col1 = String(searchParams.get("col1"));
 
     try {
         let res;
-        if (typeof id === "number") {
+        let mode
+        if (id !== "undefined") {
+            mode = "single";
+            const idNum = Number(id);
             res = await db.delete(testTable)
-                .where(eq(testTable.id, id));
+                .where(eq(testTable.id, idNum))
+                .execute();
         } else {
+            mode = "multiple";
             res = await db.delete(testTable)
-                .where(eq(testTable.col1, col1));
+                .where(ilike(testTable.col1, col1))
+                .execute();
         }
 
         return NextResponse.json({
-            message: res
+            message: res,
+            req: id,
+            mode: mode
         });
     } catch (err: any) {
         return NextResponse.json({

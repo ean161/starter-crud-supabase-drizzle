@@ -5,17 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import useTestTable from "@/hooks/useTestTable";
+import { Row } from "@/types/Row";
 import { Pencil, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-
-type Row = {
-  id: number,
-  col1: string,
-  col2: number,
-  col3: boolean,
-  createdAt: string
-};
 
 function MethodDoc({ method, guide, classes }: {
   method: string,
@@ -31,102 +25,23 @@ function MethodDoc({ method, guide, classes }: {
 }
 
 export default function Home() {
-  const [log, setLog] = useState<any>(null);
-  const [list, setList] = useState<Row[]>([]);
-  const [input, setInput] = useState<string>("");
-  const [input2, setInput2] = useState<string>("");
-  const [updateBtnVariant, setUpdateBtnVariant] = useState<"secondary" | "default">("secondary")
 
-  useEffect(() => {
-    refreshTable();
-  }, []);
-
-  const refreshTable = useCallback(async () => {
-    const res = await fetch("/api/test_table");
-    const json = await res.json();
-
-    setList(json.data);
-  }, []);
-
-  const planUpdate = useCallback((col1: string) => {
-    setInput(col1);
-    setUpdateBtnVariant("default");
-  }, []);
-
-  const handleSelect = useCallback(async () => {
-    const res = await fetch(`/api/test_table/crud?col1=${input}`, {
-      method: "GET"
-    });
-    setInput("");
-
-    const json = await res.json();
-    setLog(JSON.stringify(json));
-
-    await refreshTable();
-  }, [input]);
-
-  const handleInsert = useCallback(async () => {
-    const res = await fetch("/api/test_table/crud", {
-      method: "POST",
-      body: JSON.stringify({
-        col1: input,
-        col2: input2
-      })
-    });
-    setInput("");
-    setInput2("");
-
-    const json = await res.json();
-    setLog(JSON.stringify(json));
-
-    await refreshTable();
-  }, [input, input2]);
-
-  const handleUpdate = useCallback(async () => {
-    setUpdateBtnVariant("secondary");
-    const res = await fetch("/api/test_table/crud", {
-      method: "PATCH",
-      body: JSON.stringify({
-        col1: input,
-        col2: parseInt(input2)
-      })
-    });
-    setInput("");
-    setInput2("");
-
-    const json = await res.json();
-    setLog(JSON.stringify(json));
-
-    await refreshTable();
-  }, [input, input2]);
-
-  const handleToggle = useCallback(async (id: number) => {
-    const res = await fetch("/api/test_table/crud/col3", {
-      method: "PATCH",
-      body: JSON.stringify({
-        id: id
-      })
-    });
-    setInput("");
-    setInput2("");
-
-    const json = await res.json();
-    setLog(JSON.stringify(json));
-
-    await refreshTable();
-  }, []);
-
-  const handleDelete = useCallback(async (id?: number) => {
-    const res = await fetch(`/api/test_table/crud?id=${id}&col1=${input}`, {
-      method: "DELETE"
-    });
-    setInput("");
-
-    const json = await res.json();
-    setLog(JSON.stringify(json));
-
-    await refreshTable();
-  }, []);
+  const {
+    log,
+    list,
+    input,
+    setInput,
+    input2,
+    setInput2,
+    updateBtnVariant,
+    setUpdateBtnVariant,
+    handleSelect,
+    handleInsert,
+    planUpdate,
+    handleUpdate,
+    handleToggle,
+    handleDelete
+  } = useTestTable();
 
   return (
     <div className="m-auto p-4 w-full md:w-1/3 space-y-8">

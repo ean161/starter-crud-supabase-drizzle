@@ -13,13 +13,15 @@ export async function PATCH(req: Request) {
         db.transaction(async (tx) => {
             const [oldState] = await tx.select()
                 .from(testTable)
-                .where(eq(testTable.id, id));
+                .where(eq(testTable.id, id))
+                .execute();
 
             res = await tx.update(testTable)
                 .set({
                     col3: sql`NOT ${testTable.col3}`
                 })
-                .where(eq(testTable.id, id));
+                .where(eq(testTable.id, id))
+                .execute();
         })
 
         return NextResponse.json({
