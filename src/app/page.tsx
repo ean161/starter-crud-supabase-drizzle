@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pencil, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Row = {
   id: number,
@@ -41,19 +41,19 @@ export default function Home() {
     refreshTable();
   }, []);
 
-  const refreshTable = async () => {
+  const refreshTable = useCallback(async () => {
     const res = await fetch("/api/test_table");
     const json = await res.json();
 
     setList(json.data);
-  }
+  }, []);
 
-  const planUpdate = async (col1: string) => {
+  const planUpdate = useCallback((col1: string) => {
     setInput(col1);
     setUpdateBtnVariant("default");
-  }
+  }, []);
 
-  const handleSelect = async () => {
+  const handleSelect = useCallback(async () => {
     const res = await fetch(`/api/test_table/crud?col1=${input}`, {
       method: "GET"
     });
@@ -63,9 +63,9 @@ export default function Home() {
     setLog(JSON.stringify(json));
 
     await refreshTable();
-  }
+  }, [input]);
 
-  const handleInsert = async () => {
+  const handleInsert = useCallback(async () => {
     const res = await fetch("/api/test_table/crud", {
       method: "POST",
       body: JSON.stringify({
@@ -80,9 +80,9 @@ export default function Home() {
     setLog(JSON.stringify(json));
 
     await refreshTable();
-  }
+  }, [input, input2]);
 
-  const handleUpdate = async () => {
+  const handleUpdate = useCallback(async () => {
     setUpdateBtnVariant("secondary");
     const res = await fetch("/api/test_table/crud", {
       method: "PATCH",
@@ -98,9 +98,9 @@ export default function Home() {
     setLog(JSON.stringify(json));
 
     await refreshTable();
-  }
+  }, [input, input2]);
 
-  const handleToggle = async (id: number) => {
+  const handleToggle = useCallback(async (id: number) => {
     const res = await fetch("/api/test_table/crud/col3", {
       method: "PATCH",
       body: JSON.stringify({
@@ -114,9 +114,9 @@ export default function Home() {
     setLog(JSON.stringify(json));
 
     await refreshTable();
-  }
+  }, []);
 
-  const handleDelete = async (id?: number) => {
+  const handleDelete = useCallback(async (id?: number) => {
     const res = await fetch(`/api/test_table/crud?id=${id}&col1=${input}`, {
       method: "DELETE"
     });
@@ -126,7 +126,7 @@ export default function Home() {
     setLog(JSON.stringify(json));
 
     await refreshTable();
-  }
+  }, []);
 
   return (
     <div className="m-auto p-4 w-full md:w-1/3 space-y-8">
