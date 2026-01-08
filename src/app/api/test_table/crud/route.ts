@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { testTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
 
     const result = await db.select()
         .from(testTable)
-        .where(eq(testTable.col1, col1));
+        .where(ilike(testTable.col1, col1));
 
     if (result.length === 0) {
         return NextResponse.json({
