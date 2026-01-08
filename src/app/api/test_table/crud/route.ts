@@ -26,7 +26,9 @@ export async function POST(req: Request) {
 
     try {
         const result = await db.insert(testTable)
-            .values(body);
+            .values({
+                col1: body.col1
+            }).execute();
         return NextResponse.json({
             message: result
         });

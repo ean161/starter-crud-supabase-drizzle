@@ -25,7 +25,7 @@ export default function Home() {
   const [input2, setInput2] = useState<string>("");
 
   const handleSelect = async () => {
-    const res = await fetch(`/api/test_table?col1=${input}`, {
+    const res = await fetch(`/api/test_table/crud?col1=${input}`, {
       method: "GET"
     });
     setInput("");
@@ -35,7 +35,7 @@ export default function Home() {
   }
 
   const handleInsert = async () => {
-    const res = await fetch("/api/test_table", {
+    const res = await fetch("/api/test_table/crud", {
       method: "POST",
       body: JSON.stringify({
         col1: input,
@@ -50,7 +50,7 @@ export default function Home() {
   }
 
   const handleUpdate = async () => {
-    const res = await fetch("/api/test_table", {
+    const res = await fetch("/api/test_table/crud", {
       method: "PATCH",
       body: JSON.stringify({
         col1: input,
@@ -65,7 +65,7 @@ export default function Home() {
   }
 
   const handleDelete = async () => {
-    const res = await fetch(`/api/test_table?col1=${input}`, {
+    const res = await fetch(`/api/test_table/crud?col1=${input}`, {
       method: "DELETE"
     });
     setInput("");
@@ -93,7 +93,7 @@ export default function Home() {
       </div>
       <br />
       <div className="space-y-2">
-        <MethodDoc method="POST" guide="Where col1 = param1" classes="bg-blue-600" />
+        <MethodDoc method="SELECT" guide="Where col1 = param1" classes="bg-blue-600" />
         <MethodDoc method="INSERT" guide="Values col1 = param1, col2 = param2" classes="bg-green-600" />
         <MethodDoc method="UPDATE" guide="Set col2 = param2 where col1 = param1" classes="bg-gray-600" />
         <MethodDoc method="DELETE" guide="Where col1 = param1" classes="bg-red-600" />
