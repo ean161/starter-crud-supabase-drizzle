@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -100,6 +100,22 @@ export default function Home() {
     await refreshTable();
   }
 
+  const handleToggle = async (id: number) => {
+    const res = await fetch("/api/test_table/crud/col3", {
+      method: "PATCH",
+      body: JSON.stringify({
+        id: id
+      })
+    });
+    setInput("");
+    setInput2("");
+
+    const json = await res.json();
+    setLog(JSON.stringify(json));
+
+    await refreshTable();
+  }
+
   const handleDelete = async (id?: number) => {
     const res = await fetch(`/api/test_table/crud?id=${id}&col1=${input}`, {
       method: "DELETE"
@@ -157,10 +173,17 @@ export default function Home() {
                   <TableCell>{row.col1}</TableCell>
                   <TableCell>{row.col2}</TableCell>
                   <TableCell>{row.col3
-                    ? <Badge variant="secondary" className="text-white bg-blue-500">YES</Badge>
+                    ? <Badge variant="secondary" className="text-white bg-green-500">YES</Badge>
                     : <Badge variant="secondary" className="text-white bg-red-500">NO</Badge>}</TableCell>
                   <TableCell>{row.createdAt}</TableCell>
                   <TableCell className="space-x-2">
+                    <Button onClick={() => {
+                      handleToggle(row.id);
+                    }} size="icon" variant="secondary" className={`bg-${row.col3 ? `green` : `red`}-600`}>
+
+                      {!row.col3 && <ToggleLeft color="white" />}
+                      {row.col3 && <ToggleRight color="white" />}
+                    </Button>
                     <Button onClick={() => {
                       planUpdate(row.col1);
                     }} size="icon" variant="secondary" className="bg-blue-600">
