@@ -131,11 +131,11 @@ export default function Home() {
   return (
     <div className="m-auto p-4 w-full md:w-1/3 space-y-8">
       <div className="space-y-4">
-        <p>{log
+        <div>{log
           && <Alert>
             <AlertTitle>Log</AlertTitle>
             <AlertDescription>{log}</AlertDescription>
-          </Alert>}</p>
+          </Alert>}</div>
         <div className="flex space-x-2">
           <Input placeholder="param1" className="w-1/3" value={input} onChange={(e) => {
             setInput(e.target.value);
@@ -179,14 +179,14 @@ export default function Home() {
                   <TableCell className="space-x-2">
                     <Button onClick={() => {
                       handleToggle(row.id);
-                    }} size="icon" variant="secondary" className={`bg-${row.col3 ? `green` : `red`}-600`}>
+                    }} size="icon" variant="secondary" className={`bg-${row.col3 ? `green` : `red`}-500`}>
 
                       {!row.col3 && <ToggleLeft color="white" />}
                       {row.col3 && <ToggleRight color="white" />}
                     </Button>
                     <Button onClick={() => {
                       planUpdate(row.col1);
-                    }} size="icon" variant="secondary" className="bg-blue-600">
+                    }} size="icon" variant="secondary" className="bg-blue-500">
                       <Pencil color="white" />
                     </Button>
                     <Button onClick={() => {
@@ -202,10 +202,10 @@ export default function Home() {
         </Table>
       </div>
       <div className="space-y-4">
-        <MethodDoc method="SELECT" guide="Where col1 = param1" classes="bg-blue-600" />
-        <MethodDoc method="INSERT" guide="Values col1 = param1, col2 = param2" classes="bg-green-600" />
-        <MethodDoc method="UPDATE" guide="Set col2 = param2 where col1 = param1" classes="bg-gray-600" />
-        <MethodDoc method="DELETE" guide="Where col1 = param1" classes="bg-red-600" />
+        <MethodDoc method="SELECT" guide="Where col1 = param1" classes="bg-blue-500" />
+        <MethodDoc method="INSERT" guide="Values col1 = param1, col2 = param2" classes="bg-green-500" />
+        <MethodDoc method="UPDATE" guide="Set col2 = param2 where col1 = param1" classes="bg-gray-500" />
+        <MethodDoc method="DELETE" guide="Where col1 = param1" classes="bg-red-500" />
       </div>
     </div>
   );
