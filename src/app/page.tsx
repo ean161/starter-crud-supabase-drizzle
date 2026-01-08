@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -34,12 +35,22 @@ export default function Home() {
   const [list, setList] = useState<Row[]>([]);
   const [input, setInput] = useState<string>("");
   const [input2, setInput2] = useState<string>("");
+  const [updateBtnVariant, setUpdateBtnVariant] = useState<"secondary" | "default">("secondary")
+
+  useEffect(() => {
+    refreshTable();
+  }, []);
 
   const refreshTable = async () => {
     const res = await fetch("/api/test_table");
     const json = await res.json();
 
     setList(json.data);
+  }
+
+  const planUpdate = async (col1: string) => {
+    setInput(col1);
+    setUpdateBtnVariant("default");
   }
 
   const handleSelect = async () => {
@@ -72,6 +83,7 @@ export default function Home() {
   }
 
   const handleUpdate = async () => {
+    setUpdateBtnVariant("secondary");
     const res = await fetch("/api/test_table/crud", {
       method: "PATCH",
       body: JSON.stringify({
@@ -88,8 +100,8 @@ export default function Home() {
     await refreshTable();
   }
 
-  const handleDelete = async () => {
-    const res = await fetch(`/api/test_table/crud?col1=${input}`, {
+  const handleDelete = async (id?: number) => {
+    const res = await fetch(`/api/test_table/crud?id=${id}&col1=${input}`, {
       method: "DELETE"
     });
     setInput("");
@@ -111,16 +123,18 @@ export default function Home() {
         <div className="flex space-x-2">
           <Input placeholder="param1" className="w-1/3" value={input} onChange={(e) => {
             setInput(e.target.value);
+            if (updateBtnVariant === "default")
+              setUpdateBtnVariant("secondary");
           }} />
           <Input placeholder="param2" className="w-full" value={input2} onChange={(e) => {
             setInput2(e.target.value);
           }} />
         </div>
         <div className="space-x-2">
-          <Button onClick={() => handleSelect()}>Select</Button>
-          <Button onClick={() => handleInsert()}>Insert</Button>
-          <Button onClick={() => handleUpdate()}>Update</Button>
-          <Button onClick={() => handleDelete()}>Delete</Button>
+          <Button variant="secondary" onClick={() => handleSelect()}>Select</Button>
+          <Button variant="secondary" onClick={() => handleInsert()}>Insert</Button>
+          <Button variant={updateBtnVariant} onClick={() => handleUpdate()}>Update</Button>
+          <Button variant="secondary" onClick={() => handleDelete()}>Delete</Button>
         </div>
       </div>
       <div className="space-y-4">
@@ -132,17 +146,32 @@ export default function Home() {
               <TableHead>Col 2</TableHead>
               <TableHead>Col 3</TableHead>
               <TableHead>Created at</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {list.map((row: Row) => {
               return (
-                <TableRow>
+                <TableRow key={row.id}>
                   <TableCell>{row.id}</TableCell>
                   <TableCell>{row.col1}</TableCell>
                   <TableCell>{row.col2}</TableCell>
-                  <TableCell>{row.col3}</TableCell>
+                  <TableCell>{row.col3
+                    ? <Badge variant="secondary" className="text-white bg-blue-500">YES</Badge>
+                    : <Badge variant="secondary" className="text-white bg-red-500">NO</Badge>}</TableCell>
                   <TableCell>{row.createdAt}</TableCell>
+                  <TableCell className="space-x-2">
+                    <Button onClick={() => {
+                      planUpdate(row.col1);
+                    }} size="icon" variant="secondary" className="bg-blue-600">
+                      <Pencil color="white" />
+                    </Button>
+                    <Button onClick={() => {
+                      handleDelete(row.id);
+                    }} size="icon" variant="destructive">
+                      <Trash2 />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               );
             })}

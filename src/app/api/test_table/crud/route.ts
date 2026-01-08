@@ -61,11 +61,18 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
+    const id = Number(searchParams.get("id"));
     const col1 = String(searchParams.get("col1"));
 
     try {
-        const res = await db.delete(testTable)
-            .where(eq(testTable.col1, col1));
+        let res;
+        if (typeof id === "number") {
+            res = await db.delete(testTable)
+                .where(eq(testTable.id, id));
+        } else {
+            res = await db.delete(testTable)
+                .where(eq(testTable.col1, col1));
+        }
 
         return NextResponse.json({
             message: res
