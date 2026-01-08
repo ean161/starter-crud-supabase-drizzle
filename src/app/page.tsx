@@ -35,11 +35,7 @@ export default function Home() {
   const [input, setInput] = useState<string>("");
   const [input2, setInput2] = useState<string>("");
 
-  useEffect(() => {
-    getTable()
-  }, [log]);
-
-  const getTable = async () => {
+  const refreshTable = async () => {
     const res = await fetch("/api/test_table");
     const json = await res.json();
 
@@ -54,6 +50,8 @@ export default function Home() {
 
     const json = await res.json();
     setLog(JSON.stringify(json));
+
+    await refreshTable();
   }
 
   const handleInsert = async () => {
@@ -69,6 +67,8 @@ export default function Home() {
 
     const json = await res.json();
     setLog(JSON.stringify(json));
+
+    await refreshTable();
   }
 
   const handleUpdate = async () => {
@@ -84,6 +84,8 @@ export default function Home() {
 
     const json = await res.json();
     setLog(JSON.stringify(json));
+
+    await refreshTable();
   }
 
   const handleDelete = async () => {
@@ -94,6 +96,8 @@ export default function Home() {
 
     const json = await res.json();
     setLog(JSON.stringify(json));
+
+    await refreshTable();
   }
 
   return (
